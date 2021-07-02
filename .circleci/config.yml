@@ -13,7 +13,7 @@ jobs:
       - save_cache: # saves the project dependencies
           paths:
             - ~/.m2
-          key: hcsp-{{ checksum "pom.xml" }}
+          key: selfridicule-{{ checksum "pom.xml" }}
 workflows:
   version: 2
   default:

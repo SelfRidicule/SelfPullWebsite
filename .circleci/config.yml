@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: hcsp-{{ checksum "pom.xml" }}
+          key: selfridicule-{{ checksum "pom.xml" }}
       - run:
           name: Run Maven verify
           command: mvn clean verify -PmavenCentral

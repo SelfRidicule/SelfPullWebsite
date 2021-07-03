@@ -60,7 +60,7 @@ public class Main {
         if (articleTagList != null && articleTagList.size() > 0) {
             Element articleTag = articleTagList.get(0);
             String title = articleTag.child(0).text();
-            System.out.println("");
+            System.out.println(title);
         }
     }
 

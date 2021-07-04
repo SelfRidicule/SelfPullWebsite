@@ -13,10 +13,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Main {
 
@@ -25,33 +22,37 @@ public class Main {
     }
 
     public static void accessNetwork() {
-        //待处理的连接池
-        List<String> linkPool = new ArrayList<>();
-        //已处理的连接池
-        Set<String> processedLink = new HashSet<>();
-        //添加开始连接
-        linkPool.add("https://sina.cn/index/feed?from=touch&Ver=10");
-        //连接池有连接
-        while (!linkPool.isEmpty()) {
-            //获取连接
-            String link = linkPool.remove(linkPool.size() - 1);
-            //处理过相同的连接
-            if (processedLink.contains(link)) {
-                continue;
+        try {
+            //连接池有连接
+            while (true) {
+                //待处理的连接池
+                List<String> linkPool = H2DB.queryLinkToBeProcess();
+                //获取连接
+                String link = linkPool.remove(linkPool.size() - 1);
+                //从数据库删除待处理的连接
+                H2DB.deleteLinkToBeProcess(link);
+                //处理过相同的连接
+                if (H2DB.existLinkAlreadyProcess(link)) {
+                    continue;
+                }
+                //从数据库添加已处理的连接
+                H2DB.insertLinkAlreadyProcess(link);
+                //连接是否要处理
+                if (isLinkNotHandle(link)) {
+                    continue;
+                } else { //处理
+                    //发送HttpGet请求，解析内容返回html对象
+                    Document document = httpGetAndParseHtml(link);
+                    //连接池添加a标签连接
+                    document.select("a").stream().map(aTag -> aTag.attr("href")).forEach(H2DB::insertLinkToBeProcess);
+                    //如果是新闻详情页面，就存入数据库，否则就什么都不做
+                    storeIntoDatabaseIsPage(document);
+                }
             }
-            //添加处理过的连接
-            processedLink.add(link);
-            //连接是否要处理
-            if (isLinkNotHandle(link)) {
-                continue;
-            } else { //处理
-                //发送HttpGet请求，解析内容返回html对象
-                Document document = httpGetAndParseHtml(link);
-                //连接池添加a标签连接
-                document.select("a").stream().map(aTag-> aTag.attr("href")).forEach(linkPool::add);
-                //如果是新闻详情页面，就存入数据库，否则就什么都不做
-                storeIntoDatabaseIsPage(document);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            H2DB.close();
         }
     }
 

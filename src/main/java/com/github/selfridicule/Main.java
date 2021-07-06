@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 public class Main {
 
@@ -21,16 +20,26 @@ public class Main {
         accessNetwork();
     }
 
+    public static String queryNextLinkThenDelete() {
+        //获取连接
+        String link = H2DB.queryLinkToBeProcessFirst();
+        //没有待处理的连接
+        if (link != null) {
+            //从数据库删除待处理的连接
+            H2DB.deleteLinkToBeProcess(link);
+            //return link
+            return link;
+        } else {
+            return null;
+        }
+    }
+
     public static void accessNetwork() {
         try {
+            //连接
+            String link;
             //连接池有连接
-            while (true) {
-                //待处理的连接池
-                List<String> linkPool = H2DB.queryLinkToBeProcess();
-                //获取连接
-                String link = linkPool.remove(linkPool.size() - 1);
-                //从数据库删除待处理的连接
-                H2DB.deleteLinkToBeProcess(link);
+            while ((link = queryNextLinkThenDelete()) != null) {
                 //处理过相同的连接
                 if (H2DB.existLinkAlreadyProcess(link)) {
                     continue;

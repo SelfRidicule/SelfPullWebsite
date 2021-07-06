@@ -26,8 +26,8 @@ public class H2DB {
         try {
             connection();
             statement();
-            createTable();
-            insertData();
+//            createTable();
+//            insertData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,6 +83,15 @@ public class H2DB {
             }
         }
         return dataList;
+    }
+
+    public static String queryLinkToBeProcessFirst() {
+        List<String> list = queryLinkToBeProcess();
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
     public static List<String> queryLinkToBeProcess() {

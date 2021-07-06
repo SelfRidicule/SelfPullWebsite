@@ -13,6 +13,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -20,32 +22,18 @@ public class Main {
         accessNetwork();
     }
 
-    public static String queryNextLinkThenDelete() {
-        //获取连接
-        String link = H2DB.queryLinkToBeProcessFirst();
-        //没有待处理的连接
-        if (link != null) {
-            //从数据库删除待处理的连接
-            H2DB.deleteLinkToBeProcess(link);
-            //return link
-            return link;
-        } else {
-            return null;
-        }
-    }
-
     public static void accessNetwork() {
         try {
             //连接
             String link;
             //连接池有连接
-            while ((link = queryNextLinkThenDelete()) != null) {
+            while ((link = DataAccessObject.queryNextLinkThenDelete()) != null) {
                 //处理过相同的连接
-                if (H2DB.existLinkAlreadyProcess(link)) {
+                if (DataAccessObject.existLinkAlreadyProcess(link)) {
                     continue;
                 }
                 //从数据库添加已处理的连接
-                H2DB.insertLinkAlreadyProcess(link);
+                DataAccessObject.insertLinkAlreadyProcess(link);
                 //连接是否要处理
                 if (isLinkNotHandle(link)) {
                     continue;
@@ -53,9 +41,9 @@ public class Main {
                     //发送HttpGet请求，解析内容返回html对象
                     Document document = httpGetAndParseHtml(link);
                     //连接池添加a标签连接
-                    document.select("a").stream().map(aTag -> aTag.attr("href")).forEach(H2DB::insertLinkToBeProcess);
+                    parseDocLink(document);
                     //如果是新闻详情页面，就存入数据库，否则就什么都不做
-                    storeIntoDatabaseIsPage(document);
+                    storeIntoDatabaseIsPage(document, link);
                 }
             }
         } catch (Exception e) {
@@ -65,12 +53,26 @@ public class Main {
         }
     }
 
-    private static void storeIntoDatabaseIsPage(Document document) {
+    private static void parseDocLink(Document document) {
+        //连接池添加a标签连接
+        for (Element aTag : document.select("a")) {
+            String href = aTag.attr("href");
+            if (href == null || "".equals(href.trim()) || href.toLowerCase().contains("javascript")) {
+                continue;
+            }
+            DataAccessObject.insertLinkToBeProcess(href);
+        }
+    }
+
+    private static void storeIntoDatabaseIsPage(Document document, String url) {
         Elements articleTagList = document.select("article");
         if (articleTagList != null && articleTagList.size() > 0) {
             Element articleTag = articleTagList.get(0);
             String title = articleTag.child(0).text();
-            System.out.println(title);
+            ArrayList<Element> pList = articleTag.select("p");
+            String content = pList.stream().map(Element::text).collect(Collectors.joining("\n"));
+            //数据库添加新闻
+            DataAccessObject.insertNews(title, content, url);
         }
     }
 

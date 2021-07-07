@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.selfridicule.MyMapper">
+    <select id="queryLinkToBeProcessFirst" resultType="java.lang.String">
+        select * from link_to_be_process
+        limit 0 , 1
+    </select>
+    <select id="queryLinkToBeProcess" resultType="java.lang.String">
+        select * from link_to_be_process
+    </select>
+    <delete id="deleteLinkToBeProcess" parameterType="java.lang.String">
+        delete from link_to_be_process where link = #{link}
+    </delete>
+    <select id="queryLinkAlreadyProcess" resultType="java.lang.String">
+        select * from link_already_process
+    </select>
+    <insert id="insertLinkToBeProcess" parameterType="java.lang.String">
+        INSERT INTO link_to_be_process (link) VALUES(#{link})
+    </insert>
+    <select id="existLinkAlreadyProcess" resultType="java.lang.Integer">
+        select count(*) from link_already_process
+        where link = #{link}
+    </select>
+    <insert id="insertLinkAlreadyProcess" parameterType="java.lang.String">
+        INSERT INTO link_already_process (link) VALUES(#{link})
+    </insert>
+    <insert id="insertNews" parameterType="com.github.selfridicule.News">
+        INSERT INTO news (title , content , url , create_time , update_time) VALUES(#{title}, #{content} , #{url} , now(), now())
+    </insert>
+</mapper>

@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    SqlDao dao = new H2SqlDao();
+//    SqlDao dao = new H2SqlDao();
+    SqlDao dao = new MybatisSqlDao();
 
     public static void main(String[] args) {
         new Main().accessNetwork();

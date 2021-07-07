@@ -30,8 +30,6 @@ public class H2DB {
         try {
             connection();
             statement();
-//            createTable();
-//            insertData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,7 +68,7 @@ public class H2DB {
 
     public static void main(String[] args) {
         try {
-            List<String> list = DataAccessObject.queryLinkToBeProcess();
+            List<String> list = new H2SqlDao().queryLinkToBeProcess();
             System.out.println(list);
         } catch (Exception e) {
             e.printStackTrace();

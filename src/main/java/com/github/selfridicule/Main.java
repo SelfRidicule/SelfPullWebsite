@@ -11,29 +11,30 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        accessNetwork();
+    SqlDao dao = new H2SqlDao();
+
+    public static void main(String[] args) {
+        new Main().accessNetwork();
     }
 
-    public static void accessNetwork() {
+    public void accessNetwork() {
         try {
             //连接
             String link;
             //连接池有连接
-            while ((link = DataAccessObject.queryNextLinkThenDelete()) != null) {
+            while ((link = dao.queryNextLinkThenDelete()) != null) {
                 //处理过相同的连接
-                if (DataAccessObject.existLinkAlreadyProcess(link)) {
+                if (dao.existLinkAlreadyProcess(link)) {
                     continue;
                 }
                 //从数据库添加已处理的连接
-                DataAccessObject.insertLinkAlreadyProcess(link);
+                dao.insertLinkAlreadyProcess(link);
                 //连接是否要处理
                 if (isLinkNotHandle(link)) {
                     continue;
@@ -53,18 +54,18 @@ public class Main {
         }
     }
 
-    private static void parseDocLink(Document document) {
+    private void parseDocLink(Document document) {
         //连接池添加a标签连接
         for (Element aTag : document.select("a")) {
             String href = aTag.attr("href");
             if (href == null || "".equals(href.trim()) || href.toLowerCase().contains("javascript")) {
                 continue;
             }
-            DataAccessObject.insertLinkToBeProcess(href);
+            dao.insertLinkToBeProcess(href);
         }
     }
 
-    private static void storeIntoDatabaseIsPage(Document document, String url) {
+    private void storeIntoDatabaseIsPage(Document document, String url) {
         Elements articleTagList = document.select("article");
         if (articleTagList != null && articleTagList.size() > 0) {
             Element articleTag = articleTagList.get(0);
@@ -72,11 +73,11 @@ public class Main {
             ArrayList<Element> pList = articleTag.select("p");
             String content = pList.stream().map(Element::text).collect(Collectors.joining("\n"));
             //数据库添加新闻
-            DataAccessObject.insertNews(title, content, url);
+            dao.insertNews(title, content, url);
         }
     }
 
-    private static Document httpGetAndParseHtml(String link) {
+    private Document httpGetAndParseHtml(String link) {
         // create http
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(link);

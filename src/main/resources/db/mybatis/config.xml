@@ -7,10 +7,16 @@
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
-                <property name="driver" value="org.h2.Driver"/>
-                <property name="url" value="jdbc:h2:file:/Users/wangqichao/git/self/SelfPullWebsite/H2/db"/>
+                <!-- h2 -->
+<!--                <property name="driver" value="org.h2.Driver"/>-->
+<!--                <property name="url" value="jdbc:h2:file:/Users/wangqichao/git/self/SelfPullWebsite/H2/db"/>-->
+<!--                <property name="username" value="root"/>-->
+<!--                <property name="password" value=""/>-->
+                <!-- mysql -->
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/news"/>
                 <property name="username" value="root"/>
-                <property name="password" value=""/>
+                <property name="password" value="root"/>
             </dataSource>
         </environment>
     </environments>

@@ -102,6 +102,12 @@
             <artifactId>mybatis</artifactId>
             <version>3.5.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.21</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -164,10 +170,17 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.2.4</version>
+                <!--  h2  -->
+<!--                <configuration>-->
+<!--                    <url>jdbc:h2:file:/Users/wangqichao/git/self/SelfPullWebsite/H2/db</url>-->
+<!--                    <user>root</user>-->
+<!--                    <password></password>-->
+<!--                </configuration>-->
+                <!--  mysql  -->
                 <configuration>
-                    <url>jdbc:h2:file:/Users/wangqichao/git/self/SelfPullWebsite/H2/db</url>
+                    <url>jdbc:mysql://127.0.0.1:3306/news</url>
                     <user>root</user>
-                    <password></password>
+                    <password>root</password>
                 </configuration>
             </plugin>
         </plugins>

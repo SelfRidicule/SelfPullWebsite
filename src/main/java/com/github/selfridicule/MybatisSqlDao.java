@@ -25,7 +25,7 @@ public class MybatisSqlDao implements SqlDao {
     }
 
     @Override
-    public String queryNextLinkThenDelete() {
+    public synchronized String queryNextLinkThenDelete() {
         String link = queryLinkToBeProcessFirst();
         if (link != null) {
             deleteLinkToBeProcess(link);

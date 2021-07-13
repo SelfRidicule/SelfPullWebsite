@@ -15,13 +15,24 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class Main {
+public class Main extends Thread {
 
-//    SqlDao dao = new H2SqlDao();
-    SqlDao dao = new MybatisSqlDao();
+    SqlDao dao;
+
+    public Main(SqlDao dao) {
+        this.dao = dao;
+    }
 
     public static void main(String[] args) {
-        new Main().accessNetwork();
+        SqlDao sqlDao = new MybatisSqlDao();
+        for (int i = 0; i < 4; i++) {
+            new Main(sqlDao).start();
+        }
+    }
+
+    @Override
+    public void run() {
+        accessNetwork();
     }
 
     public void accessNetwork() {

@@ -29,4 +29,7 @@
     <insert id="insertNews" parameterType="com.github.selfridicule.News">
         INSERT INTO news (title , content , url , create_time , update_time) VALUES(#{title}, #{content} , #{url} , now(), now())
     </insert>
+    <select id="queryNews" resultType="com.github.selfridicule.News">
+        select * from news
+    </select>
 </mapper>

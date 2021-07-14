@@ -101,4 +101,11 @@ public class MybatisSqlDao implements SqlDao {
             return true;
         }
     }
+
+    @Override
+    public List<News> queryNews() {
+        try (SqlSession session = sqlSessionFactory.openSession(true)) {
+            return session.selectList("com.github.selfridicule.MyMapper.queryNews");
+        }
+    }
 }

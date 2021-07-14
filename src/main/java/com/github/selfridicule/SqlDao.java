@@ -21,4 +21,6 @@ public interface SqlDao {
     boolean insertLinkAlreadyProcess(String link);
 
     boolean insertNews(String title, String content, String url);
+
+    List<News> queryNews();
 }

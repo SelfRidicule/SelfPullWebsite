@@ -6,3 +6,4 @@
 #### maven h2 数据库
 #### maven flyway 数据库版本管理工具
 #### maven MyBatis 持久层框架
+#### maven ElasticSearch

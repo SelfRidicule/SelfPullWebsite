@@ -140,4 +140,9 @@ public class H2SqlDao implements SqlDao {
         return false;
     }
 
+    @Override
+    public List<News> queryNews() {
+        return null;
+    }
+
 }
